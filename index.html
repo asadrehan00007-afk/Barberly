@@ -1,0 +1,1047 @@
+import React, { useState } from 'react';
+import { 
+    Scissors, Zap, Crown, Aperture, User, Dribbble, Check, UploadCloud, Loader, Image as ImageIcon,
+    Palette, Smile, Heart, Circle, Diamond, Droplet, Sun, Moon, ZapOff, Anchor, Wind, Cloud, Feather, Shirt
+} from 'lucide-react';
+
+// --- Data Definitions for Outfits (NEW AND EXPANDED) ---
+
+const OUTFIT_STYLES = {
+    men: {
+        Party: [
+            { id: 'mo1', name: 'Velvet Dinner Jacket', style: 'Formal, deep burgundy velvet dinner jacket with a black bow tie.', icon: Crown },
+            { id: 'mo2', name: 'Modern Slim-Fit Suit', style: 'Navy blue slim-fit suit with a patterned shirt, no tie.', icon: Zap },
+            { id: 'mo3', name: 'High-Collar Polo Look', style: 'Black high-collar polo shirt and crisp white trousers.', icon: Aperture },
+            { id: 'mo4', name: 'Leather Jacket & Jeans', style: 'Edgy black leather jacket over a simple tee and dark jeans.', icon: Dribbble },
+            { id: 'mo5', name: 'Patterned Blazer', style: 'Bold geometric patterned blazer with solid color slacks.', icon: Diamond },
+            { id: 'mo6', name: 'Metallic Brocade Jacket', style: 'Black jacket with subtle gold metallic brocade pattern, dark velvet trousers, and a black turtleneck.', icon: Palette },
+            { id: 'mo7', name: 'Modern Tuxedo', style: 'Midnight blue tuxedo with peak lapels, black shirt, and patent leather loafers (no socks).', icon: Zap },
+            { id: 'mo8', name: 'Statement Suit', style: 'Forest green suit with a windowpane check, wide lapels, and a crisp white shirt.', icon: Crown },
+            { id: 'mo9', name: 'All Black Knitwear', style: 'High-end black merino wool sweater, black tailored trousers, and leather boots.', icon: Diamond },
+            { id: 'mo10', name: 'Dark Denim & Velvet', style: 'Dark indigo selvedge jeans, black t-shirt, and a dark green velvet blazer.', icon: User },
+            { id: 'mo11', name: 'Patterned Trousers', style: 'Solid black jacket, black shirt, and slim-fit trousers in a subtle geometric pattern.', icon: Aperture },
+            { id: 'mo12', name: 'White Blazer Look', style: 'White linen-blend blazer, light grey trousers, and a navy polo shirt.', icon: Sun },
+            { id: 'mo13', name: 'Sheen Bomber', style: 'Black silk-sheen bomber jacket, fitted black t-shirt, and dark cargo trousers.', icon: Moon },
+            { id: 'mo14', name: 'Turtleneck & Blazer', style: 'Charcoal wool blazer over a thin black turtleneck sweater and black pants.', icon: Circle },
+            { id: 'mo15', name: 'High Shine Vest', style: 'High-shine quilted vest over a long-sleeve knit shirt and slim jeans.', icon: Check },
+            { id: 'mo16', name: 'Deep Purple Suit', style: 'A contemporary, deep purple suit with black piping detail, worn with a black crew neck tee.', icon: Heart },
+            { id: 'mo17', name: 'Pinstripe Double-Breasted', style: 'Classic grey pinstripe double-breasted suit, white shirt, and a dark silk tie.', icon: Feather },
+            { id: 'mo18', name: 'Bohemian Linen', style: 'Relaxed beige linen shirt (open collar), wide-leg black trousers, and leather sandals.', icon: Wind },
+            { id: 'mo19', name: 'Velvet Trousers', style: 'Simple black collared shirt, and slim-fit trousers made of rich, dark blue velvet.', icon: Anchor },
+            { id: 'mo20', name: 'Suede Jacket', style: 'Tan suede trucker jacket, white henley shirt, and distressed dark denim jeans.', icon: Dribbble },
+            { id: 'mo21', name: 'Silk Print Shirt', style: 'Black silk shirt with an abstract art print, worn tucked into black tailored shorts.', icon: Droplet },
+            { id: 'mo22', name: 'Metallic Accents', style: 'Black suit jacket with metallic silver chain accents on the lapel, grey shirt.', icon: ZapOff },
+            { id: 'mo23', name: 'Cuban Collar Shirt', style: 'Bold, vintage-inspired Cuban collar shirt in black and red, with black slacks.', icon: Cloud },
+            { id: 'mo24', name: 'Cashmere Sweater Look', style: 'Fine gray cashmere crewneck sweater, dark tailored pants, and a leather belt.', icon: Smile },
+            { id: 'mo25', name: 'Double-Breasted Blazer', style: 'Unstructured dark navy double-breasted blazer, light blue dress shirt, dark chinos.', icon: Scissors },
+        ],
+        'Family Function': [
+            { id: 'mf1', name: 'Traditional Kurta Set', style: 'Light linen kurta in a pastel color with matching pajama bottoms.', icon: Heart },
+            { id: 'mf2', name: 'Sweater Vest & Chinos', style: 'Argyle sweater vest over a collared shirt, paired with beige chinos.', icon: Circle },
+            { id: 'mf3', name: 'Classic Blazer & Jeans', style: 'Tweed blazer over a light shirt with well-fitting dark wash jeans.', icon: User },
+            { id: 'mf4', name: 'Polo & Slacks', style: 'Solid color polo shirt tucked into tailored grey slacks.', icon: Check },
+            { id: 'mf5', name: 'Waistcoat Look', style: 'Waistcoat worn over a shirt, with matching trousers, but no jacket.', icon: Feather },
+            { id: 'mf6', name: 'Light Khaki Suit', style: 'Lightweight summer suit in light khaki, worn with a pale blue linen shirt.', icon: Palette },
+            { id: 'mf7', name: 'Madras Plaid Shirt', style: 'A classic button-down shirt in colorful madras plaid, paired with straight-leg jeans.', icon: Zap },
+            { id: 'mf8', name: 'Shawl Collar Cardigan', style: 'A thick, wool shawl-collar cardigan over a simple white t-shirt and dark chinos.', icon: Crown },
+            { id: 'mf9', name: 'Nehru Jacket Look', style: 'A simple silk kurta with a contrasting structured Nehru jacket (bandhgala vest) over it.', icon: Diamond },
+            { id: 'mf10', name: 'Dark Denim & Boots', style: 'Dark, crisp denim jeans, a brown leather belt, and a high-quality leather boot.', icon: User },
+            { id: 'mf11', name: 'Herringbone Blazer', style: 'A textural grey herringbone wool blazer over a light sweater and tailored slacks.', icon: Aperture },
+            { id: 'mf12', name: 'Corduroy Trousers', style: 'A button-down shirt paired with brown corduroy trousers and a casual watch.', icon: Sun },
+            { id: 'mf13', name: 'Crew Neck Sweater', style: 'A fine-gauge, solid-color crewneck sweater (e.g., sky blue) over a crisp collared shirt.', icon: Moon },
+            { id: 'mf14', name: 'Denim Shirt', style: 'A light-wash denim shirt with dark trousers, fully buttoned up.', icon: Circle },
+            { id: 'mf15', name: 'Checked Blazer', style: 'A casual blue and white checked blazer, open over a white t-shirt, and dark trousers.', icon: Check },
+            { id: 'mf16', name: 'Sweater Vest & Tie', style: 'A v-neck sweater vest (solid color) over a button-down, with a subtle knit tie.', icon: Heart },
+            { id: 'mf17', name: 'Cotton Drawstring', style: 'Relaxed, dark blue cotton drawstring trousers with a light, knitted polo shirt.', icon: Feather },
+            { id: 'mf18', name: 'Light Tweed Sportcoat', style: 'A light brown tweed sportcoat with navy trousers and a turtleneck.', icon: Wind },
+            { id: 'mf19', name: 'Chino Shorts & Loafers', style: 'Navy chino shorts (knee-length), white polo shirt, and leather penny loafers (no socks).', icon: Anchor },
+            { id: 'mf20', name: 'Suede Slip-On Shoes', style: 'Well-ironed light blue button-down shirt, dark gray slacks, and brown suede slip-on shoes.', icon: Dribbble },
+            { id: 'mf21', name: 'Cashmere Zip Sweater', style: 'A half-zip cashmere sweater in burgundy over a simple white t-shirt and jeans.', icon: Droplet },
+            { id: 'mf22', name: 'Pique Polo', style: 'A textured pique polo shirt in a neutral color, tucked into dark slacks.', icon: ZapOff },
+            { id: 'mf23', name: 'Light Grey Trousers', style: 'Light grey tailored wool trousers, black belt, and a simple black long-sleeve top.', icon: Cloud },
+            { id: 'mf24', name: 'Patchwork Quilted Vest', style: 'A thin, quilted patchwork vest worn over a flannel shirt and jeans.', icon: Smile },
+            { id: 'mf25', name: 'Boat Shoes Look', style: 'Bright white trousers (cuffed), light collared shirt, and classic brown boat shoes.', icon: Scissors },
+        ],
+        Picnic: [
+            { id: 'mp1', name: 'Linen Shirt & Shorts', style: 'Relaxed fit white linen button-down with light-colored shorts.', icon: Sun },
+            { id: 'mp2', name: 'Polo Shirt & Khakis', style: 'Bright blue polo shirt and cuffed khaki pants.', icon: ZapOff },
+            { id: 'mp3', name: 'Graphic Tee & Cap', style: 'Comfortable graphic t-shirt, athletic shorts, and a baseball cap.', icon: Aperture },
+            { id: 'mp4', name: 'Overalls & Sneakers', style: 'Denim overalls over a striped t-shirt and casual sneakers.', icon: Anchor },
+            { id: 'mp5', name: 'Light Cardigan', style: 'A thin, breathable cardigan over a t-shirt and casual pants.', icon: Moon },
+            { id: 'mp6', name: 'Seersucker Shorts', style: 'Light blue seersucker shorts, a white t-shirt, and white sneakers.', icon: Palette },
+            { id: 'mp7', name: 'Denim Overalls', style: 'Classic medium-wash denim overalls worn over a brightly colored t-shirt.', icon: Zap },
+            { id: 'mp8', name: 'Fishing Vest Look', style: 'A technical/utility fishing vest worn over a plain white t-shirt, with rugged cargo pants.', icon: Crown },
+            { id: 'mp9', name: 'Patterned Swim Trunks', style: 'A casual, loose-fit linen shirt worn with colorful, patterned swim trunks (as shorts).', icon: Diamond },
+            { id: 'mp10', name: 'Canvas Trousers', style: 'Straight-fit canvas trousers, a simple white tank top, and a wide-brim hat.', icon: User },
+            { id: 'mp11', name: 'Flannel Shirt', style: 'A soft, oversized flannel shirt (worn open) over a plain t-shirt and hiking shorts.', icon: Aperture },
+            { id: 'mp12', name: 'Wide Leg Chinos', style: 'Relaxed, wide-leg khaki chinos, a fitted dark polo, and comfortable canvas slip-ons.', icon: Sun },
+            { id: 'mp13', name: 'Chambray Shirt', style: 'A light-wash chambray shirt, cuffed at the sleeves, with dark green chino shorts.', icon: Moon },
+            { id: 'mp14', name: 'Retro Graphic Tee', style: 'A vintage-style graphic t-shirt, relaxed-fit jeans, and a pair of retro sunglasses.', icon: Circle },
+            { id: 'mp15', name: 'Light Anorak Jacket', style: 'A lightweight nylon anorak jacket (pullover) with drawstrings, over athletic wear.', icon: Check },
+            { id: 'mp16', name: 'Bucket Hat & Tee', style: 'A simple pocket t-shirt, distressed light jeans, and a classic cotton bucket hat.', icon: Heart },
+            { id: 'mp17', name: 'Terry Cloth Polo', style: 'A short-sleeve terry cloth polo shirt in a bright color (e.g., yellow) and white shorts.', icon: Feather },
+            { id: 'mp18', name: 'Athletic Joggers', style: 'Athleisure joggers in a charcoal grey, a technical moisture-wicking t-shirt, and trainers.', icon: Wind },
+            { id: 'mp19', name: 'V-Neck Sweater (Light)', style: 'A lightweight, fine-knit V-neck sweater over a button-down shirt and straight-leg jeans.', icon: Anchor },
+            { id: 'mp20', name: 'Light Safari Jacket', style: 'A light, cotton safari-style jacket (multiple pockets), over a t-shirt and shorts.', icon: Dribbble },
+            { id: 'mp21', name: 'Striped T-Shirt', style: 'A classic Breton-stripe t-shirt, navy shorts, and canvas deck shoes.', icon: Droplet },
+            { id: 'mp22', name: 'Simple Hoodie', style: 'A relaxed-fit solid grey cotton hoodie, dark shorts, and trainers.', icon: ZapOff },
+            { id: 'mp23', name: 'Twill Cap & Cargo', style: 'A classic twill baseball cap, simple t-shirt, and comfortable cotton cargo pants.', icon: Cloud },
+            { id: 'mp24', name: 'White Jeans Look', style: 'White denim jeans, a light blue linen shirt, and brown woven leather belt.', icon: Smile },
+            { id: 'mp25', name: 'Light Denim Shirt', style: 'A short-sleeve light denim button-down, cuffed khaki shorts, and trainers.', icon: Scissors },
+        ],
+        Beach: [
+            { id: 'mb1', name: 'Hawaiian Shirt', style: 'Vibrantly patterned Hawaiian shirt, open over swim trunks.', icon: Droplet },
+            { id: 'mb2', name: 'Breathable Tank & Shorts', style: 'White cotton tank top with colorful board shorts.', icon: Wind },
+            { id: 'mb3', name: 'Linen Drawstring Pants', style: 'Light, natural-colored linen drawstring pants and a t-shirt.', icon: Cloud },
+            { id: 'mb4', name: 'Sun Protection Hoody', style: 'Long-sleeve, lightweight sun protection hoody and shades.', icon: User },
+            { id: 'mb5', name: 'V-Neck Tee & Sunglasses', style: 'Simple V-neck t-shirt with classic aviator sunglasses.', icon: Circle },
+            { id: 'mb6', name: 'Rash Guard & Boardshorts', style: 'A long-sleeve rash guard shirt and mid-length, tropical-print boardshorts.', icon: Palette },
+            { id: 'mb7', name: 'Linen Vest & Shorts', style: 'A simple white linen vest (sleeveless) with drawstring linen shorts.', icon: Zap },
+            { id: 'mb8', name: 'Straw Fedora', style: 'Simple swim trunks and a t-shirt, accessorized with a lightweight straw fedora.', icon: Crown },
+            { id: 'mb9', name: 'Gauze Shirt', style: 'A lightweight, crinkled cotton gauze button-down shirt, worn open over swim trunks.', icon: Diamond },
+            { id: 'mb10', name: 'Dark Swim Trunks', style: 'Fitted, dark-colored swim trunks, a muscle tank top, and flip-flops.', icon: User },
+            { id: 'mb11', name: 'Light Denim Shorts', style: 'Faded light denim cut-off shorts, no shirt, and a waterproof sports watch.', icon: Aperture },
+            { id: 'mb12', name: 'Quick-Dry Trousers', style: 'Lightweight, quick-dry technical trousers (rolled up) and a casual, simple polo shirt.', icon: Sun },
+            { id: 'mb13', name: 'Graphic Tank Top', style: 'A brightly colored graphic tank top, mid-length chino shorts, and boat shoes.', icon: Moon },
+            { id: 'mb14', name: 'Hoodie & Shorts', style: 'A thin, zippered cotton hoodie worn over swim trunks for sun protection/breeze.', icon: Circle },
+            { id: 'mb15', name: 'Wide-Brim Hat', style: 'A simple linen t-shirt, linen shorts, and a wide-brim straw hat.', icon: Check },
+            { id: 'mb16', name: 'Simple Speedo', style: 'A classic, solid-color (e.g., navy) speedo-style swimsuit, no shirt.', icon: Heart },
+            { id: 'mb17', name: 'Tie-Dye Shirt', style: 'An oversized, colorful tie-dye t-shirt worn over simple black swim shorts.', icon: Feather },
+            { id: 'mb18', name: 'Surf Brand Apparel', style: 'A simple, branded t-shirt from a surf company, board shorts, and a baseball cap.', icon: Wind },
+            { id: 'mb19', name: 'Terry Towel Shirt', style: 'A short-sleeve terry towel material shirt, worn buttoned up with simple shorts.', icon: Anchor },
+            { id: 'mb20', name: 'Mesh Shorts', style: 'Athletic mesh shorts, a simple tank top, and a lightweight backpack.', icon: Dribbble },
+            { id: 'mb21', name: 'Cuban Collar Set', style: 'A matching set of Cuban-collar shirt and shorts in a fun, geometric print.', icon: Droplet },
+            { id: 'mb22', name: 'White Linen Trousers', style: 'Loose-fit white linen trousers, a simple V-neck t-shirt, and slip-on espadrilles.', icon: ZapOff },
+            { id: 'mb23', name: 'Contrast Piping', style: 'Simple swim shorts with contrast piping detail, worn with a fitted polo shirt.', icon: Cloud },
+            { id: 'mb24', name: 'Long-Sleeve Cotton', style: 'A thin, long-sleeve cotton shirt in a light color (for maximum sun protection), worn with shorts.', icon: Smile },
+            { id: 'mb25', name: 'Classic Plaid Trunks', style: 'Classic plaid (e.g., red/white) swim trunks, no shirt, and simple sandals.', icon: Scissors },
+        ],
+        Marriage: [
+            { id: 'mm1', name: 'Three-Piece Tuxedo', style: 'Classic black three-piece tuxedo with a white shirt and velvet bow tie.', icon: Diamond },
+            { id: 'mm2', name: 'Custom Suit', style: 'A tailored charcoal grey suit with a sophisticated pocket square.', icon: Check },
+            { id: 'mm3', name: 'Sherwani/Indo-Western', style: 'Richly embroidered Sherwani or Indo-Western suit.', icon: Palette },
+            { id: 'mm4', name: 'Morning Dress', style: 'Traditional morning dress with striped trousers and a tailcoat.', icon: Crown },
+            { id: 'mm5', name: 'Semi-Formal Blazer', style: 'Navy blazer, light blue dress shirt, and contrasting slacks (guest attire).', icon: Zap },
+            { id: 'mm6', name: 'Ivory Sherwani', style: 'A traditional long ivory Sherwani suit with subtle gold embroidery.', icon: Palette },
+            { id: 'mm7', name: 'Tweed Three-Piece', style: 'A sophisticated brown tweed three-piece suit, with a muted blue tie (winter wedding).', icon: Zap },
+            { id: 'mm8', name: 'Light Blue Linen Suit', style: 'A relaxed fit, light blue linen suit (jacket and trousers) for a summer outdoor wedding.', icon: Crown },
+            { id: 'mm9', name: 'Bandhgala Suit', style: 'A structured black Bandhgala (Jodhpuri) suit with a high, closed neck.', icon: Diamond },
+            { id: 'mm10', name: 'Classic Morning Suit', style: 'Full traditional morning dress with a charcoal coat, striped trousers, and a grey vest.', icon: User },
+            { id: 'mm11', name: 'Maroon Velvet Blazer', style: 'A striking maroon velvet blazer, black dress trousers, and a black bow tie.', icon: Aperture },
+            { id: 'mm12', name: 'Navy Double-Breasted', style: 'A sharp, contemporary navy blue double-breasted suit.', icon: Sun },
+            { id: 'mm13', name: 'Light Grey Suit', style: 'A modern, light grey slim-fit suit with a pocket square and no tie.', icon: Moon },
+            { id: 'mm14', name: 'Tan Suit & Loafers', style: 'A tan or beige unstructured suit, white t-shirt underneath, and brown leather loafers (guest attire).', icon: Circle },
+            { id: 'mm15', name: 'Dark Green Suit', style: 'A dark forest green suit with a black shirt and black dress shoes.', icon: Check },
+            { id: 'mm16', name: 'Indian Brocade Vest', style: 'A simple white kurta set with a vibrant brocade waistcoat/vest.', icon: Heart },
+            { id: 'mm17', name: 'White Tuxedo Jacket', style: 'A classic black trouser/cummerbund set with a white dinner jacket (formal).', icon: Feather },
+            { id: 'mm18', name: 'Windowpane Check Suit', style: 'A navy suit featuring a subtle windowpane check pattern, worn with a light pink shirt.', icon: Wind },
+            { id: 'mm19', name: 'Black Tie Optional', style: 'A black tuxedo with a crisp white dress shirt and a silver knit tie.', icon: Anchor },
+            { id: 'mm20', name: 'Brown Wool Suit', style: 'A heavy brown wool suit (vest optional) with a patterned silk tie (fall wedding).', icon: Dribbble },
+            { id: 'mm21', name: 'Simple Jodhpuri', style: 'A minimal Jodhpuri suit in a dark charcoal color, without excessive embroidery.', icon: Droplet },
+            { id: 'mm22', name: 'White Linen Trousers', style: 'White linen trousers and a crisp light blue dress shirt (beach wedding guest).', icon: ZapOff },
+            { id: 'mm23', name: 'Grey Pinstripe', style: 'A classic, tailored grey pinstripe suit, white shirt, and a dark blue tie.', icon: Cloud },
+            { id: 'mm24', name: 'Light Sport Coat', style: 'A light, subtle plaid sport coat, dark slacks, and a sophisticated knit tie (casual guest).', icon: Smile },
+            { id: 'mm25', name: 'Dark Red Tie', style: 'A classic black suit, white shirt, and a deep burgundy or dark red silk tie and pocket square set.', icon: Scissors },
+        ],
+    },
+    women: {
+        Party: [
+            { id: 'wo1', name: 'Sequin Mini Dress', style: 'A dazzling sequin mini dress in metallic silver or gold.', icon: Crown },
+            { id: 'wo2', name: 'Chic Black Jumpsuit', style: 'A sleek, black wide-leg jumpsuit with a defined waist.', icon: Zap },
+            { id: 'wo3', name: 'Silk Slip Dress', style: 'An elegant, bias-cut silk slip dress in a jewel tone.', icon: Aperture },
+            { id: 'wo4', name: 'Tailored Suit Look', style: 'A bold-colored, well-tailored pantsuit with a cropped top underneath.', icon: Dribbble },
+            { id: 'wo5', name: 'Feather Trim Dress', style: 'A cocktail dress with playful feather trim details at the hem or cuffs.', icon: Feather },
+            { id: 'wo6', name: 'Metallic Brocade Mini', style: 'A metallic gold brocade A-line mini dress with puff sleeves and black high heels.', icon: Palette },
+            { id: 'wo7', name: 'Structured Corset Top', style: 'A tailored black trouser suit paired with a structured, boned corset top.', icon: Zap },
+            { id: 'wo8', name: 'Velvet Off-Shoulder', style: 'A deep emerald green velvet off-the-shoulder cocktail dress.', icon: Crown },
+            { id: 'wo9', name: 'Feathered Co-ord', style: 'A two-piece set (crop top and wide-leg pants) in white, both trimmed with ostrich feathers.', icon: Diamond },
+            { id: 'wo10', name: 'Tulle Gown', style: 'A voluminous mini dress made entirely of layered black sheer tulle.', icon: User },
+            { id: 'wo11', name: 'Sequined Jumpsuit', style: 'A black jumpsuit fully covered in iridescent sequins, with a wide belt.', icon: Aperture },
+            { id: 'wo12', name: 'Asymmetrical Satin', style: 'A knee-length asymmetrical satin dress in a vibrant fuchsia color.', icon: Sun },
+            { id: 'wo13', name: 'Glittery Knit Dress', style: 'A form-fitting midi dress made of heavy glittery metallic knit fabric.', icon: Moon },
+            { id: 'wo14', name: 'Statement Mini Skirt', style: 'Simple black long-sleeve top paired with an exaggerated voluminous mini skirt (e.g., leather or ruffled).', icon: Circle },
+            { id: 'wo15', name: 'High-Slit Dress', style: 'A floor-length, figure-hugging dress in a solid, deep color (like burgundy) with a dramatic thigh-high slit.', icon: Check },
+            { id: 'wo16', name: 'Crystal Embellished', style: 'A simple white dress adorned with tiny scattered crystals for subtle sparkle.', icon: Heart },
+            { id: 'wo17', name: 'Fringe Dress', style: 'A flapper-style mini dress completely covered in tiered, delicate black fringe.', icon: Feather },
+            { id: 'wo18', name: 'High-Neck Sheer', style: 'A sophisticated long-sleeve dress with a high neck and sheer panels along the arms and back.', icon: Wind },
+            { id: 'wo19', name: 'Satin Slip Skirt', style: 'A delicate lace camisole paired with a flowing champagne-colored satin maxi slip skirt.', icon: Anchor },
+            { id: 'wo20', name: 'Power Blazer Dress', style: 'An oversized, double-breasted blazer worn as a dress, cinched with a wide leather belt.', icon: Dribbble },
+            { id: 'wo21', name: 'Cut-out Detail', style: 'A modern body-con dress in neon green featuring strategic, geometric cut-outs on the waist.', icon: Droplet },
+            { id: 'wo22', name: 'Metallic Bodysuit', style: 'High-waisted leather trousers paired with a metallic silver long-sleeve bodysuit.', icon: ZapOff },
+            { id: 'wo23', name: 'Ruffled Mini', style: 'A bright yellow ruffled mini dress with layered ruffles cascading down the skirt.', icon: Cloud },
+            { id: 'wo24', name: 'Sequin Pants', style: 'A simple black scoop-neck top paired with wide-leg silver sequin trousers.', icon: Smile },
+            { id: 'wo25', name: 'Leather Mini Dress', style: 'A fitted, sleeveless leather mini dress in a dark brown color.', icon: Scissors },
+        ],
+        'Family Function': [
+            { id: 'wf1', name: 'Anarkali Suit', style: 'A floor-length, embroidered Anarkali suit with a dupatta.', icon: Heart },
+            { id: 'wf2', name: 'Floral Midi Dress', style: 'A soft, flowing floral print midi dress.', icon: Circle },
+            { id: 'wf3', name: 'Wrap Blouse & Trousers', style: 'A sophisticated wrap blouse paired with wide-leg trousers.', icon: User },
+            { id: 'wf4', name: 'Saree Look', style: 'A contemporary styled saree draped over a simple blouse.', icon: Palette },
+            { id: 'wf5', name: 'Turtleneck & Skirt', style: 'A neutral-colored turtleneck sweater paired with a pleated midi skirt.', icon: Sun },
+            { id: 'wf6', name: 'Chikankari Kurti Set', style: 'A traditional white Chikankari long kurti paired with wide palazzo pants.', icon: Palette },
+            { id: 'wf7', name: 'Floral Print Maxi', style: 'A long, flowing maxi dress with an intricate, colorful floral print and cinched waist.', icon: Zap },
+            { id: 'wf8', name: 'A-Line Skirt & Blouse', style: 'A solid, mid-calf A-line skirt (e.g., velvet) paired with a high-neck silk blouse.', icon: Crown },
+            { id: 'wf9', name: 'Simple Saree', style: 'A delicate cotton or silk Saree in a solid, muted color with a thin gold border.', icon: Diamond },
+            { id: 'wf10', name: 'Wide-Leg Trousers', style: 'High-waisted, wide-leg tailored trousers with a matching sleeveless top and simple belt.', icon: User },
+            { id: 'wf11', name: 'Pleated Midi Skirt', style: 'A sun-pleated midi skirt in a metallic or jewel tone, paired with a fitted cashmere sweater.', icon: Aperture },
+            { id: 'wf12', name: 'Wrap Dress', style: 'A classic, knee-length jersey wrap dress in a geometric or abstract print.', icon: Sun },
+            { id: 'wf13', name: 'Ethnic Jacket', style: 'A solid-color dress or top and pants set, topped with a short, embroidered ethnic jacket.', icon: Moon },
+            { id: 'wf14', name: 'Pencil Skirt Suit', style: 'A tailored pencil skirt paired with a matching structured blazer (worn open) over a silky camisole.', icon: Circle },
+            { id: 'wf15', name: 'Jumpsuit & Shawl', style: 'A tailored, dark-colored jumpsuit accessorized with an embroidered silk shawl draped over the shoulders.', icon: Check },
+            { id: 'wf16', name: 'Broderie Anglaise Dress', style: 'A knee-length dress made of white Broderie Anglaise (eyelet) fabric with a soft collar.', icon: Heart },
+            { id: 'wf17', name: 'Knit Co-ord Set', style: 'A comfortable, ribbed knit two-piece set (midi skirt and cardigan) in a neutral color.', icon: Feather },
+            { id: 'wf18', name: 'Tiered Skirt & Blouse', style: 'A flowing, tiered maxi skirt paired with an elegant, tucked-in silk blouse with voluminous sleeves.', icon: Wind },
+            { id: 'wf19', name: 'Palazzo Pants Suit', style: 'A matching set of wide-leg palazzo pants and a long tunic top, often in a pastel color.', icon: Anchor },
+            { id: 'wf20', name: 'Tweed Mini Dress', style: 'A Chanel-inspired tweed mini dress with a fitted silhouette and slight frayed edges.', icon: Dribbble },
+            { id: 'wf21', name: 'Embroidered Tunic', style: 'A brightly colored silk tunic top with intricate embroidery, worn over simple leggings or slim pants.', icon: Droplet },
+            { id: 'wf22', name: 'Mock-Neck Dress', style: 'A simple, elegant midi dress with a mock turtleneck and long sleeves in a soft jersey fabric.', icon: ZapOff },
+            { id: 'wf23', name: 'Block Print Dress', style: 'A cotton dress featuring traditional Indian block prints, with a relaxed fit.', icon: Cloud },
+            { id: 'wf24', name: 'Velvet Trousers & Top', style: 'Soft velvet tailored trousers in a dark color (e.g., navy) paired with a cream lace top.', icon: Smile },
+            { id: 'wf25', name: 'Ruffled Blouse & Jeans', style: 'A highly feminine ruffled blouse with a high neck, paired with clean, dark-wash tailored jeans.', icon: Scissors },
+        ],
+        Picnic: [
+            { id: 'wp1', name: 'Flowy Sundress', style: 'A light, cotton sundress with a tiered skirt.', icon: Moon },
+            { id: 'wp2', name: 'Denim Skirt & Knit Top', style: 'A high-waisted denim skirt with a fitted knit crop top.', icon: Droplet },
+            { id: 'wp3', name: 'Overalls & Stripes', style: 'Loose-fitting white linen overalls over a striped tee.', icon: Wind },
+            { id: 'wp4', name: 'Capri Pants & Sandals', style: 'Capri pants with a simple tank top and comfortable leather sandals.', icon: ZapOff },
+            { id: 'wp5', name: 'T-shirt Dress', style: 'A comfortable, oversized jersey t-shirt dress.', icon: Check },
+            { id: 'wp6', name: 'Gingham Dress', style: 'A flowy cotton midi dress in a classic red and white gingham pattern.', icon: Palette },
+            { id: 'wp7', name: 'High-Waisted Culottes', style: 'Wide-leg linen culottes in a soft pastel shade (e.g., mint) with a simple white tank top.', icon: Zap },
+            { id: 'wp8', name: 'Vintage Maxi Skirt', style: 'A vintage-inspired floral maxi skirt with a fitted white off-the-shoulder blouse.', icon: Crown },
+            { id: 'wp9', name: 'Overalls & Stripes', style: 'Denim short-style overalls worn over a striped Breton shirt.', icon: Diamond },
+            { id: 'wp10', name: 'Linen Jumpsuit', style: 'A relaxed, button-front linen jumpsuit in a natural beige color.', icon: User },
+            { id: 'wp11', name: 'Embroidered Tunic', style: 'A white cotton tunic top with colorful embroidery, worn over denim shorts.', icon: Aperture },
+            { id: 'wp12', name: 'Cotton Shorts Co-ord', style: 'A matching set of tailored cotton shorts and a short-sleeve button-down shirt in a small print.', icon: Sun },
+            { id: 'wp13', name: 'Tiered Mini Skirt', style: 'A brightly colored, tiered cotton mini skirt with a tucked-in graphic t-shirt.', icon: Moon },
+            { id: 'wp14', name: 'Shirt Dress', style: 'A knee-length cotton shirt dress, cinched at the waist with a simple woven belt.', icon: Circle },
+            { id: 'wp15', name: 'Athletic Skort & Polo', style: 'A comfortable athletic skort (skirt/shorts combo) paired with a fitted pique polo shirt.', icon: Check },
+            { id: 'wp16', name: 'Wide-Brim Hat Look', style: 'Simple white t-shirt and jeans, accessorized with a large, woven sun hat.', icon: Heart },
+            { id: 'wp17', name: 'Crochet Detail Top', style: 'A white cotton blouse featuring crochet or lace detailing, with denim shorts.', icon: Feather },
+            { id: 'wp18', name: 'Lightweight Hoodie', style: 'A lightweight pastel-colored cotton hoodie over cycling shorts and trainers.', icon: Wind },
+            { id: 'wp19', name: 'Peasant Blouse', style: 'A bohemian peasant blouse with puff sleeves, paired with dark cropped jeans.', icon: Anchor },
+            { id: 'wp20', name: 'Denim Vest & Dress', style: 'A denim vest worn over a simple, solid-colored midi dress.', icon: Dribbble },
+            { id: 'wp21', name: 'Madras Skirt', style: 'A knee-length skirt made of colorful madras plaid fabric, with a white t-shirt.', icon: Droplet },
+            { id: 'wp22', name: 'Utility Jumpsuit', style: 'A practical, light-colored utility-style jumpsuit with multiple pockets and a belt.', icon: ZapOff },
+            { id: 'wp23', name: 'Linen Trousers & Tank', style: 'Loose-fitting linen trousers in a natural color paired with a simple fitted tank top.', icon: Cloud },
+            { id: 'wp24', name: 'Pleated Tennis Dress', style: 'A white pleated tennis dress with trainers, giving an athletic chic look.', icon: Smile },
+            { id: 'wp25', name: 'Ruffled Mini Dress', style: 'A simple cotton mini dress with a small ruffle detail on the sleeves or hem.', icon: Scissors },
+        ],
+        Beach: [
+            { id: 'wb1', name: 'Colorful Kaftan', style: 'An airy, colorful printed kaftan over a swimsuit.', icon: Cloud },
+            { id: 'wb2', name: 'High-Waisted Bikini & Coverup', style: 'A high-waisted bikini with a sheer, lightweight coverup shirt.', icon: Anchor },
+            { id: 'wb3', name: 'Shorts & Bralette', style: 'Denim cut-off shorts with a crochet bralette and large sun hat.', icon: Diamond },
+            { id: 'wb4', name: 'Maxi Skirt & Tank', style: 'A long, tiered maxi skirt and a simple cotton tank top.', icon: Aperture },
+            { id: 'wb5', name: 'Sarong & Straw Hat', style: 'A tropical-print sarong tied as a dress, paired with a wide-brim straw hat.', icon: Circle },
+            { id: 'wb6', name: 'Sheer Cover-up', style: 'A long, sheer mesh or crochet cover-up dress over a colorful swimsuit.', icon: Palette },
+            { id: 'wb7', name: 'High-Cut Swimsuit', style: 'A high-cut, bright neon one-piece swimsuit, with a simple bandana head wrap.', icon: Zap },
+            { id: 'wb8', name: 'Linen Tie-Front', style: 'A cropped, tie-front linen blouse worn over a bikini top and shorts.', icon: Crown },
+            { id: 'wb9', name: 'Wide-Leg Trousers', style: 'Flowy, wide-leg patterned trousers worn over a bikini, with a straw tote bag.', icon: Diamond },
+            { id: 'wb10', name: 'Maxi Shirt Dress', style: 'An oversized, loose-fit white cotton shirt dress worn open over a swimsuit.', icon: User },
+            { id: 'wb11', name: 'Crochet Bikini Set', style: 'A matching crochet bikini top and bottom, with a simple gold body chain.', icon: Aperture },
+            { id: 'wb12', name: 'Skirt & Crop Top Set', style: 'A lightweight cotton maxi skirt and matching crop top (co-ord set).', icon: Sun },
+            { id: 'wb13', name: 'Denim Romper', style: 'A light-wash denim romper (short one-piece) worn over a neutral bikini.', icon: Moon },
+            { id: 'wb14', name: 'Terry Cloth Shorts Set', style: 'A matching set of terry cloth shorts and a simple button-down shirt.', icon: Circle },
+            { id: 'wb15', name: 'Kimono Coverup', style: 'A long, flowing silk or chiffon kimono cover-up with a bold print.', icon: Check },
+            { id: 'wb16', name: 'Simple One-Piece', style: 'A classic, solid-color (e.g., black) scoop-neck one-piece swimsuit, no coverup.', icon: Heart },
+            { id: 'wb17', name: 'Jumpsuit Coverup', style: 'A thin, lightweight jersey jumpsuit (worn partially unzipped) over a swimsuit.', icon: Feather },
+            { id: 'wb18', name: 'Bandana Headband', style: 'Simple cotton t-shirt and shorts, accessorized with a colorful print bandana tied as a headband.', icon: Wind },
+            { id: 'wb19', name: 'Tassled Coverup', style: 'A short, cotton cover-up with playful tassel or pom-pom details on the hem.', icon: Anchor },
+            { id: 'wb20', name: 'Sarong & Shell Jewelry', style: 'A simple sarong wrap skirt (worn high-waisted) with shell-beaded jewelry.', icon: Dribbble },
+            { id: 'wb21', name: 'White Lace Top', style: 'A white lace-paneled peasant top, worn over a bikini top with distressed denim shorts.', icon: Droplet },
+            { id: 'wb22', name: 'Bucket Hat & Sunglasses', style: 'A simple swimsuit with an oversized patterned bucket hat and large retro sunglasses.', icon: ZapOff },
+            { id: 'wb23', name: 'T-shirt & Roll-up Shorts', style: 'An oversized band t-shirt (worn knotted) with simple roll-up cotton shorts.', icon: Cloud },
+            { id: 'wb24', name: 'High-Waisted Shorts Set', style: 'A structured, high-waisted short and fitted top co-ord set in a vibrant solid color.', icon: Smile },
+            { id: 'wb25', name: 'Knit Mini Dress', style: 'A loose-fitting, open-knit mini dress (used as a cover-up) in a light color.', icon: Scissors },
+        ],
+        Marriage: [
+            { id: 'wm1', name: 'Heavy Lehenga Choli', style: 'A heavily embroidered Lehenga Choli with mirror work and a voluminous skirt.', icon: Palette },
+            { id: 'wm2', name: 'Formal Gown', style: 'A floor-length, deep sapphire blue satin gown (Western style).', icon: Diamond },
+            { id: 'wm3', name: 'Cocktail Dress', style: 'A mid-length lace cocktail dress suitable for semi-formal weddings.', icon: Heart },
+            { id: 'wm4', name: 'Jacket & Skirt Suit', style: 'A tailored jacket and matching pencil skirt in a sophisticated fabric.', icon: Crown },
+            { id: 'wm5', name: 'Banarasi Saree', style: 'A traditional heavy silk Banarasi Saree with a rich border.', icon: User },
+            { id: 'wm6', name: 'Heavily Beaded Gown', style: 'A floor-length gown in a dark color (e.g., navy) with heavy crystal or bead embellishment.', icon: Palette },
+            { id: 'wm7', name: 'Designer Saree', style: 'A designer-style Saree in a contemporary fabric (e.g., net or georgette) with modern border work.', icon: Zap },
+            { id: 'wm8', name: 'Pastel Cocktail Dress', style: 'A knee-length cocktail dress in a soft pastel shade (e.g., lilac) with light lace detailing.', icon: Crown },
+            { id: 'wm9', name: 'Lehenga with Cape', style: 'A Lehenga skirt and choli top paired with a long, sheer, embroidered cape instead of a dupatta.', icon: Diamond },
+            { id: 'wm10', name: 'Metallic Pleated Gown', style: 'A floor-length gown with a metallic finish (gold or copper) and a knife-pleat skirt.', icon: User },
+            { id: 'wm11', name: 'Tea-Length Dress', style: 'A vintage-inspired tea-length dress with a full, voluminous skirt (e.g., tulle or satin).', icon: Aperture },
+            { id: 'wm12', name: 'Contemporary Suit', style: 'A highly tailored, colored pantsuit (e.g., bright pink or cobalt blue) with elegant jewelry.', icon: Sun },
+            { id: 'wm13', name: 'Ankle-Length Anarkali', style: 'An ankle-length Anarkali suit with heavy zari or thread work.', icon: Moon },
+            { id: 'wm14', name: 'Wrap Dress (Silk)', style: 'A formal, luxurious silk wrap dress in a deep jewel tone (e.g., amethyst).', icon: Circle },
+            { id: 'wm15', name: 'Sequin Midi Dress', style: 'A midi-length dress fully covered in small, matte sequins (guest attire).', icon: Check },
+            { id: 'wm16', name: 'Velvet Jumpsuit', style: 'A luxurious velvet jumpsuit with wide legs and an off-the-shoulder neckline.', icon: Heart },
+            { id: 'wm17', name: 'Printed Maxi Dress', style: 'A floor-length maxi dress in a bold, abstract print suitable for an outdoor/bohemian wedding.', icon: Feather },
+            { id: 'wm18', name: 'Dupion Silk Lehenga', style: 'A traditional Lehenga made of stiff Dupion silk with traditional, less flashy embroidery.', icon: Wind },
+            { id: 'wm19', name: 'Feather Trim Dress', style: 'A chic cocktail dress in a simple silhouette with feather trim on the sleeves or hem.', icon: Anchor },
+            { id: 'wm20', name: 'Brocade Suit Set', style: 'A tailored three-piece suit set (trousers, top, and jacket) in a rich brocade fabric.', icon: Dribbble },
+            { id: 'wm21', name: 'Gown with High-Low Hem', style: 'A formal gown with a high-low hemline (short in front, long in back) and sophisticated fabric.', icon: Droplet },
+            { id: 'wm22', name: 'Asymmetrical Dress', style: 'A knee-length dress with an asymmetrical neckline and a subtle side ruffle detail.', icon: ZapOff },
+            { id: 'wm23', name: 'Chiffon Ruffle Saree', style: 'A simple chiffon saree with a modern, pleated ruffle border and a contrasting blouse.', icon: Cloud },
+            { id: 'wm24', name: 'Tulle Skirt & Top', style: 'A full, high-waisted midi skirt made of layered tulle, paired with a fitted silk blouse.', icon: Smile },
+            { id: 'wm25', name: 'Emerald Velvet Dress', style: 'A long-sleeve, high-neck emerald green velvet dress, perfect for a winter wedding.', icon: Scissors },
+        ],
+    },
+};
+
+const OCCASION_CATEGORIES = ['Party', 'Family Function', 'Picnic', 'Beach', 'Marriage'];
+
+// --- Data Definitions for other styles (UNCHANGED) ---
+
+const MALE_HAIRSTYLES = [
+    { id: 'm1', name: 'Classic Taper', category: 'Short', icon: Scissors },
+    { id: 'm2', name: 'Undercut Fade', category: 'Short', icon: Zap },
+    { id: 'm3', name: 'Slicked Back', category: 'Medium', icon: Crown },
+    { id: 'm4', name: 'Quiff', category: 'Medium', icon: Aperture },
+    { id: 'm5', name: 'Buzz Cut', category: 'Very Short', icon: Check },
+    { id: 'm6', name: 'Pompadour', category: 'Medium', icon: User },
+    { id: 'm7', name: 'French Crop', category: 'Short', icon: Dribbble },
+    { id: 'm8', name: 'Textured Fringe', category: 'Short', icon: Moon },
+    { id: 'm9', name: 'Crew Cut', category: 'Very Short', icon: Circle },
+    { id: 'm10', name: 'Faux Hawk', category: 'Medium', icon: Diamond },
+    { id: 'm11', name: 'Long Flow', category: 'Long', icon: Wind },
+    { id: 'm12', name: 'Angular Fringe', category: 'Short', icon: Anchor },
+    { id: 'm13', name: 'Side Part Comb Over', category: 'Medium', icon: Feather },
+    { id: 'm14', name: 'High & Tight', category: 'Very Short', icon: ZapOff },
+];
+
+const BEARD_STYLES = [
+    { id: 'b1', name: 'Clean Shaven', category: 'None', icon: Check },
+    { id: 'b2', name: 'Heavy Stubble', category: 'Light', icon: User },
+    { id: 'b3', name: 'Full Natural', category: 'Heavy', icon: Crown },
+    { id: 'b4', name: 'Goatee', category: 'Focused', icon: Aperture },
+    { id: 'b5', name: 'Balbo', category: 'Focused', icon: Scissors },
+    { id: 'b6', name: 'Anchor Beard', category: 'Detailed', icon: Anchor },
+    { id: 'b7', name: 'Van Dyke', category: 'Detailed', icon: Diamond },
+    { id: 'b8', name: 'Mutton Chops', category: 'Classic', icon: Heart },
+    { id: 'b9', name: 'Bandholz (Long)', category: 'Heavy', icon: Sun },
+    { id: 'b10', name: 'Chevron Moustache', category: 'Moustache', icon: Droplet },
+];
+
+const FEMALE_HAIRSTYLES = [
+    { id: 'w1', name: 'Long Layers', category: 'Long', icon: User },
+    { id: 'w2', name: 'Textured Bob', category: 'Short', icon: Scissors },
+    { id: 'w3', name: 'Beach Waves', category: 'Medium', icon: Sun },
+    { id: 'w4', name: 'Sleek Pixie', category: 'Very Short', icon: Zap },
+    { id: 'w5', name: 'Balayage Color', category: 'Long', icon: Palette },
+    { id: 'w6', name: 'A-Line Lob', category: 'Medium', icon: Circle },
+    { id: 'w7', name: 'Curtain Bangs', category: 'Medium', icon: Moon },
+    { id: 'w8', name: 'High Ponytail', category: 'Updo', icon: Crown },
+    { id: 'w9', name: 'Shag Cut', category: 'Medium', icon: Aperture },
+    { id: 'w10', name: 'Braided Crown', category: 'Updo', icon: Diamond },
+    { id: 'w11', name: 'Space Buns', category: 'Updo', icon: Heart },
+    { id: 'w12', name: 'Voluminous Curls', category: 'Long', icon: Droplet },
+    { id: 'w13', name: 'Asymmetrical Cut', category: 'Short', icon: Wind },
+    { id: 'w14', name: 'Dutch Braids', category: 'Updo', icon: Dribbble },
+    { id: 'w15', name: 'Copper Dye', category: 'Color', icon: Anchor },
+];
+
+const LIPSTICK_SHADES = [
+    { id: 'l1', name: 'Nude Gloss', category: 'Neutral', icon: Droplet },
+    { id: 'l2', name: 'Classic Red', category: 'Bold', icon: Heart },
+    { id: 'l3', name: 'Soft Coral', category: 'Warm', icon: Sun },
+    { id: 'l4', name: 'Deep Berry Matte', category: 'Cool', icon: Moon },
+    { id: 'l5', name: 'Hot Pink Satin', category: 'Bold', icon: Palette },
+    { id: 'l6', name: 'Dusty Rose', category: 'Neutral', icon: Smile },
+    { id: 'l7', name: 'Terracotta Clay', category: 'Warm', icon: Diamond },
+    { id: 'l8', name: 'Metallic Gold', category: 'Statement', icon: Crown },
+    { id: 'l9', name: 'Sheer Peach', category: 'Light', icon: Aperture },
+    { id: 'l10', name: 'True Fuchsia', category: 'Bold', icon: Zap },
+    { id: 'l11', name: 'Mahogany Brown', category: 'Deep', icon: User },
+    { id: 'l12', name: 'Electric Violet', category: 'Statement', icon: Dribbble },
+    { id: 'l13', name: 'Wine Stain', category: 'Deep', icon: Circle },
+    { id: 'l14', name: 'Clear Balm', category: 'Light', icon: Check },
+    { id: 'l15', name: 'Neon Orange', category: 'Statement', icon: Scissors },
+];
+
+const EYEBROW_STYLES = [
+    { id: 'e1', name: 'Feathered Natural', category: 'Soft', icon: Smile },
+    { id: 'e2', name: 'High Arched', category: 'Defined', icon: Aperture },
+    { id: 'e3', name: 'Straight Bold', category: 'Modern', icon: Crown },
+    { id: 'e4', name: 'Soft Pomade', category: 'Filled', icon: Feather },
+    { id: 'e5', name: 'Microbladed Defined', category: 'Detailed', icon: Check },
+    { id: 'e6', name: 'Tapered End', category: 'Shape', icon: Circle },
+    { id: 'e7', name: 'Slightly Rounded', category: 'Soft', icon: Diamond },
+    { id: 'e8', name: 'Power Brow', category: 'Bold', icon: Heart },
+    { id: 'e9', name: 'Bushy Full', category: 'Thick', icon: Sun },
+    { id: 'e10', name: 'Thin Classic', category: 'Fine', icon: Moon },
+    { id: 'e11', name: 'Boy Brow', category: 'Natural', icon: Smile },
+    { id: 'e12', name: 'Gradient Fill', category: 'Detailed', icon: Aperture },
+    { id: 'e13', name: 'Sharp Angle', category: 'Defined', icon: Crown },
+    { id: 'e14', name: 'Short & Thick', category: 'Thick', icon: Feather },
+    { id: 'e15', name: 'Lightly Groomed', category: 'Soft', icon: Check },
+    { id: 'e16', name: 'S-Shaped Arch', category: 'Shape', icon: Circle },
+    { id: 'e17', name: 'Faded Start', category: 'Detailed', icon: Diamond },
+    { id: 'e18', name: 'Asian Straight', category: 'Modern', icon: Heart },
+    { id: 'e19', name: 'Dark Defined', category: 'Bold', icon: Sun },
+    { id: 'e20', name: 'Subtle Arch', category: 'Soft', icon: Moon },
+    { id: 'e21', name: 'Spoolie Brush Up', category: 'Texture', icon: Smile },
+    { id: 'e22', name: 'Natural Unplucked', category: 'Thick', icon: Aperture },
+    { id: 'e23', name: 'Fine Pencil Thin', category: 'Fine', icon: Crown },
+    { id: 'e24', name: 'Cleaned Up', category: 'Soft', icon: Feather },
+    { id: 'e25', name: 'Platinum Bleached', category: 'Color', icon: Check },
+    { id: 'e26', name: 'Caramel Tint', category: 'Color', icon: Circle },
+    { id: 'e27', name: 'Smokey Shadow', category: 'Detailed', icon: Diamond },
+    { id: 'e28', name: 'Extreme High Arch', category: 'Defined', icon: Heart },
+    { id: 'e29', name: 'Soft Powder Look', category: 'Filled', icon: Sun },
+    { id: 'e30', name: 'Dramatic Thick', category: 'Bold', icon: Moon },
+    { id: 'e31', name: 'Angular Defined', category: 'Defined', icon: Smile },
+    { id: 'e32', name: 'Smooth Lamination', category: 'Texture', icon: Aperture },
+    { id: 'e33', name: 'Medium Thickness', category: 'Natural', icon: Crown },
+    { id: 'e34', name: 'Wisp Feathered', category: 'Soft', icon: Feather },
+    { id: 'e35', name: 'Pencil Shaved', category: 'Fine', icon: Check },
+    { id: 'e36', name: 'Ash Brown Fill', category: 'Color', icon: Circle },
+    { id: 'e37', name: 'Redhead Tint', category: 'Color', icon: Diamond },
+    { id: 'e38', name: 'Minimalist Clean', category: 'Natural', icon: Heart },
+    { id: 'e39', name: 'Upward Sweep', category: 'Texture', icon: Sun },
+    { id: 'e40', name: 'Downward Curve', category: 'Shape', icon: Moon },
+    { id: 'e41', name: 'Thin & Arched', category: 'Fine', icon: Smile },
+    { id: 'e42', name: 'Thick & Straight', category: 'Thick', icon: Aperture },
+    { id: 'e43', name: 'Half Arch', category: 'Shape', icon: Crown },
+    { id: 'e44', name: 'Full Block', category: 'Bold', icon: Feather },
+    { id: 'e45', name: 'Subtle Highlighter', category: 'Detailed', icon: Check },
+    { id: 'e46', name: 'Deep Black Dye', category: 'Color', icon: Circle },
+    { id: 'e47', name: 'Graphic Line', category: 'Modern', icon: Diamond },
+    { id: 'e48', name: 'Long & Natural', category: 'Natural', icon: Heart },
+    { id: 'e49', name: 'Barely There', category: 'Light', icon: Sun },
+    { id: 'e50', name: 'High Lift', category: 'Texture', icon: Moon },
+];
+
+const EARRING_STYLES = [
+    { id: 'r1', name: 'Small Studs', category: 'Minimalist', icon: Diamond },
+    { id: 'r2', name: 'Medium Hoops', category: 'Classic', icon: Circle },
+    { id: 'r3', name: 'Dangling Tassels', category: 'Statement', icon: Zap },
+    { id: 'r4', name: 'Diamond Cluster', category: 'Luxury', icon: Heart },
+    { id: 'r5', name: 'Gold Huggies', category: 'Minimalist', icon: Anchor },
+    { id: 'r6', name: 'Pearl Drops', category: 'Classic', icon: Crown },
+    { id: 'r7', name: 'Silver Sleeper', category: 'Minimalist', icon: Droplet },
+    { id: 'r8', name: 'Statement Chandeliers', category: 'Luxury', icon: Sun },
+    { id: 'r9', name: 'Minimalist Bar', category: 'Modern', icon: Moon },
+    { id: 'r10', name: 'Cuff Set', category: 'Set', icon: Wind },
+    { id: 'r11', name: 'Geometric Shape', category: 'Modern', icon: Diamond },
+    { id: 'r12', name: 'Chain Drop', category: 'Dangle', icon: Circle },
+    { id: 'r13', name: 'Emerald Stone', category: 'Luxury', icon: Zap },
+    { id: 'r14', name: 'Rose Gold Studs', category: 'Minimalist', icon: Heart },
+    { id: 'r15', name: 'Beaded Hoop', category: 'Textured', icon: Anchor },
+    { id: 'r16', name: 'Crystal Linear', category: 'Dangle', icon: Crown },
+    { id: 'r17', name: 'Simple Teardrop', category: 'Classic', icon: Droplet },
+    { id: 'r18', name: 'Oxidized Silver', category: 'Vintage', icon: Sun },
+    { id: 'r19', name: 'Abstract Sculpture', category: 'Statement', icon: Moon },
+    { id: 'r20', name: 'Threader Earrings', category: 'Modern', icon: Wind },
+    { id: 'r21', name: 'Snake Charm', category: 'Dangle', icon: Diamond },
+    { id: 'r22', name: 'Lightning Bolt', category: 'Modern', icon: Circle },
+    { id: 'r23', name: 'Floral Design', category: 'Feminine', icon: Zap },
+    { id: 'r24', name: 'Initial Studs', category: 'Personalized', icon: Heart },
+    { id: 'r25', name: 'Textured Hoops', category: 'Textured', icon: Anchor },
+    { id: 'r26', name: 'Vintage Cameo', category: 'Vintage', icon: Crown },
+    { id: 'r27', name: 'Rainbow Gems', category: 'Colorful', icon: Droplet },
+    { id: 'r28', name: 'Oversized Safety Pin', category: 'Edgy', icon: Sun },
+    { id: 'r29', name: 'Chain Maille', category: 'Textured', icon: Moon },
+    { id: 'r30', name: 'Feather Duster', category: 'Statement', icon: Wind },
+    { id: 'r31', name: 'Art Deco Fan', category: 'Vintage', icon: Diamond },
+    { id: 'r32', name: 'Bamboo Hoops', category: 'Classic', icon: Circle },
+    { id: 'r33', name: 'Tiny Cross Studs', category: 'Minimalist', icon: Zap },
+    { id: 'r34', name: 'Heart Shaped Hoops', category: 'Feminine', icon: Heart },
+    { id: 'r35', name: 'Black Onyx Drops', category: 'Classic', icon: Anchor },
+    { id: 'r36', name: 'Double Sided Stud', category: 'Modern', icon: Crown },
+    { id: 'r37', name: 'Waterfall Fringe', category: 'Statement', icon: Droplet },
+    { id: 'r38', name: 'Galaxy Design', category: 'Detailed', icon: Sun },
+    { id: 'r39', name: 'Dangling Stars', category: 'Detailed', icon: Moon },
+    { id: 'r40', name: 'Magnetic Stud', category: 'Novelty', icon: Wind },
+    { id: 'r41', name: 'Clip-On Classic', category: 'Classic', icon: Diamond },
+    { id: 'r42', name: 'Industrial Barbell', category: 'Edgy', icon: Circle },
+    { id: 'r43', name: 'Glimmering Quartz', category: 'Luxury', icon: Zap },
+    { id: 'r44', name: 'Acrylic Neon', category: 'Colorful', icon: Heart },
+    { id: 'r45', name: 'Pearl Cuffs', category: 'Set', icon: Anchor },
+    { id: 'r46', name: 'Butterfly Back', category: 'Feminine', icon: Crown },
+    { id: 'r47', name: 'Long Chain Link', category: 'Dangle', icon: Droplet },
+    { id: 'r48', name: 'Sculptural Dangle', category: 'Statement', icon: Sun },
+    { id: 'r49', name: 'Hammered Disk', category: 'Textured', icon: Moon },
+    { id: 'r50', name: 'Multiple Piercings', category: 'Set', icon: Wind },
+];
+
+
+// --- Utility Components and API Logic ---
+
+const MAX_RETRIES = 5;
+const API_KEY = ""; // Placeholder for Canvas environment
+
+// Exponential backoff retry function for API calls
+const retry = async (fn, retries = MAX_RETRIES, delay = 1000) => {
+    try {
+        return await fn();
+    } catch (error) {
+        if (retries > 0) {
+            await new Promise(res => setTimeout(res, delay));
+            return retry(fn, retries - 1, delay * 2);
+        }
+        throw error;
+    }
+};
+
+// Utility Component for displaying an option card
+const OptionCard = ({ item, selectedId, onSelect, Icon }) => {
+    const isSelected = item.id === selectedId;
+    const commonClasses = "p-3 sm:p-4 flex flex-col items-center justify-center rounded-xl transition-all duration-200 cursor-pointer shadow-lg hover:shadow-amber-500/50 relative"; 
+    const selectedClasses = "bg-amber-700/50 border-2 border-amber-400 ring-4 ring-amber-400/50 scale-[1.02] transform";
+    const unselectedClasses = "bg-gray-700/80 border border-gray-600 hover:bg-gray-600/90 hover:border-amber-500";
+
+    return (
+        <div
+            className={`${commonClasses} ${isSelected ? selectedClasses : unselectedClasses}`}
+            onClick={() => onSelect(item)}
+            title={item.name}
+        >
+            <div className="text-amber-400 mb-2">
+                <Icon size={24} />
+            </div>
+            <p className="text-white text-xs sm:text-sm font-semibold text-center">{item.name}</p>
+            {isSelected && <Check className="absolute top-1 right-1 text-green-400" size={16} />}
+        </div>
+    );
+};
+
+
+// Main Application Component
+const App = () => {
+    // Global Mode State
+    const [mode, setMode] = useState('women'); // 'men' or 'women'
+    const [activeCategory, setActiveCategory] = useState('Hairstyle'); // For the currently visible options tab
+
+    // Outfit State (NEW)
+    const [selectedOccasion, setSelectedOccasion] = useState(OCCASION_CATEGORIES[0]);
+    // Initialize outfit based on mode/occasion
+    const initialOutfit = OUTFIT_STYLES['women'][OCCASION_CATEGORIES[0]][0];
+    const [selectedOutfit, setSelectedOutfit] = useState(initialOutfit);
+
+    // Men's State
+    const [selectedMaleHairstyle, setSelectedMaleHairstyle] = useState(MALE_HAIRSTYLES[0]);
+    const [selectedBeard, setSelectedBeard] = useState(BEARD_STYLES[0]);
+
+    // Women's State
+    const [selectedFemaleHairstyle, setSelectedFemaleHairstyle] = useState(FEMALE_HAIRSTYLES[0]);
+    const [selectedLipstick, setSelectedLipstick] = useState(LIPSTICK_SHADES[0]);
+    const [selectedEyebrow, setSelectedEyebrow] = useState(EYEBROW_STYLES[0]);
+    const [selectedEarrings, setSelectedEarrings] = useState(EARRING_STYLES[0]);
+    
+    // Image and Loading state
+    const [uploadedImageBase64, setUploadedImageBase64] = useState(null);
+    const [processedImageBase64, setProcessedImageBase64] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    
+    // LLM analysis state
+    const [analysisText, setAnalysisText] = useState(null);
+    const [isAnalysisLoading, setIsAnalysisLoading] = useState(false);
+
+    /**
+     * Gets the current selected items based on the mode.
+     */
+    const getCurrentSelections = (currentMode = mode) => {
+        const baseSelections = {
+            outfit: selectedOutfit,
+            occasion: selectedOccasion,
+        };
+
+        if (currentMode === 'men') {
+            return {
+                ...baseSelections,
+                hairstyle: selectedMaleHairstyle,
+                beard: selectedBeard,
+            };
+        } else {
+            return {
+                ...baseSelections,
+                hairstyle: selectedFemaleHairstyle,
+                lipstick: selectedLipstick,
+                eyebrow: selectedEyebrow,
+                earrings: selectedEarrings,
+            };
+        }
+    };
+    
+    /**
+     * Handles the file upload event and triggers the initial image generation.
+     */
+    const handleImageUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result;
+                setUploadedImageBase64(base64String);
+                setProcessedImageBase64(base64String); // Show original image immediately
+                setAnalysisText(null); // Clear previous analysis on new photo
+                generateStyledImage(getCurrentSelections(), base64String);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    /**
+     * Calls the Gemini API for image generation (Image-to-Image).
+     */
+    const generateStyledImage = async (selections, imageBase64) => {
+        if (!imageBase64) return;
+        
+        // Construct the detailed outfit style for the prompt
+        const outfitDescription = selections.outfit ? `Change their clothing to a full-body look matching the following outfit concept: ${selections.outfit.style}.` : '';
+
+        let prompt;
+        const currentMode = selections.beard ? 'men' : 'women'; // Infer mode from selections object
+        
+        if (currentMode === 'men') {
+            prompt = `Apply the "${selections.hairstyle.name}" hairstyle and the "${selections.beard.name}" beard style onto the face in the provided image. ${outfitDescription} Maintain the person's facial features and background context. Ensure the generated image looks photorealistic and is seamlessly integrated.`;
+        } else { // 'women'
+            prompt = `Apply the "${selections.hairstyle.name}" hairstyle, "${selections.lipstick.name}" lipstick shade, "${selections.eyebrow.name}" eyebrow style, and "${selections.earrings.name}" earrings to the face in the provided image. ${outfitDescription} Maintain the person's facial structure, skin color, and background context. Ensure the result is photorealistic and flattering.`;
+        }
+
+        const [mimePart, dataPart] = imageBase64.split(',');
+        const mimeType = mimePart.split(':')[1].split(';')[0];
+        const base64Data = dataPart;
+
+        const payload = {
+            contents: [{ role: "user", parts: [{ text: prompt }, { inlineData: { mimeType: mimeType, data: base64Data } }] }],
+            generationConfig: { responseModalities: ['IMAGE'] },
+        };
+
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${API_KEY}`;
+
+        try {
+            setIsLoading(true);
+            setProcessedImageBase64(null);
+            setAnalysisText(null);
+            
+            const apiCall = async () => {
+                const response = await fetch(apiUrl, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+            };
+
+            const result = await retry(apiCall);
+            const base64DataResult = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+            if (base64DataResult) {
+                setProcessedImageBase64(`data:image/png;base64,${base64DataResult}`);
+            } else {
+                console.error("API response did not contain image data. Showing original.");
+                setProcessedImageBase64(uploadedImageBase64); 
+            }
+        } catch (error) {
+            console.error("Error generating styled image:", error);
+            setProcessedImageBase64(uploadedImageBase64);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
+    /**
+     * Calls the Gemini API for text generation to provide expert analysis.
+     */
+    const generateAnalysis = async () => {
+        setIsAnalysisLoading(true);
+        setAnalysisText(null);
+        const selections = getCurrentSelections();
+        const outfitName = selections.outfit ? selections.outfit.name : 'Default';
+
+        let systemPrompt, userQuery;
+        
+        if (mode === 'men') {
+            systemPrompt = "You are a world-class Master Barber and grooming expert named 'Barberly Bot'. Provide a professional, encouraging, and detailed analysis of the user's selected hair, beard, and outfit combination. Give specific styling tips, maintenance advice, and critique the overall harmony of the look for the occasion.";
+            userQuery = `I have selected the following combination: Hairstyle: "${selections.hairstyle.name}", Beard Style: "${selections.beard.name}", and Outfit: "${outfitName}" for a ${selections.occasion} occasion. Please provide your expert analysis, styling recommendations, and maintenance routine for this complete look.`;
+        } else { // 'women'
+            systemPrompt = "You are a world-class celebrity stylist and makeup artist named 'Barberly Bot'. Provide a professional, encouraging, and detailed analysis of the user's selected hairstyle, makeup, accessories, and outfit combination. Give specific advice on harmonizing the look, makeup application tips, accessory pairing, and critique the overall ensemble for the occasion. Focus on color, texture, and balance.";
+            userQuery = `I have selected the following look: Hairstyle: "${selections.hairstyle.name}", Lipstick: "${selections.lipstick.name}", Eyebrow Style: "${selections.eyebrow.name}", Earrings: "${selections.earrings.name}", and Outfit: "${outfitName}" for a ${selections.occasion} occasion. Please provide your expert style analysis and actionable tips for this complete look.`;
+        }
+
+        const payload = {
+            contents: [{ parts: [{ text: userQuery }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+        };
+
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
+
+        try {
+            const apiCall = async () => {
+                const response = await fetch(apiUrl, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+            };
+
+            const result = await retry(apiCall);
+            const generatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            setAnalysisText(generatedText || `Sorry, Barberly Bot couldn't generate an analysis for this complex style. Try a different combination!`);
+        } catch (error) {
+            console.error("Error generating analysis:", error);
+            setAnalysisText("An error occurred while connecting to the expert system. Please check your network connection.");
+        } finally {
+            setIsAnalysisLoading(false);
+        }
+    };
+
+    
+    // Consolidated change handler for all styles
+    const handleStyleChange = (category, item) => {
+        setAnalysisText(null); // Clear analysis on any style change
+        
+        const currentSelections = getCurrentSelections();
+        let newSelections = { ...currentSelections };
+        
+        // Update the state for the specific category
+        if (mode === 'men') {
+            if (category === 'Hairstyle') setSelectedMaleHairstyle(item);
+            if (category === 'Beard') setSelectedBeard(item);
+            if (category === 'Outfit') setSelectedOutfit(item);
+            // Update selections object for image generation
+            newSelections = { ...currentSelections, [category === 'Hairstyle' ? 'hairstyle' : category === 'Beard' ? 'beard' : 'outfit']: item };
+        } else { // 'women'
+            if (category === 'Hairstyle') setSelectedFemaleHairstyle(item);
+            if (category === 'Lipstick') setSelectedLipstick(item);
+            if (category === 'Eyebrows') setSelectedEyebrow(item);
+            if (category === 'Earrings') setSelectedEarrings(item);
+            if (category === 'Outfit') setSelectedOutfit(item);
+            // Update selections object for image generation
+            newSelections = { ...currentSelections, [category.toLowerCase()]: item };
+        }
+
+        if (uploadedImageBase64) {
+            generateStyledImage(newSelections, uploadedImageBase64);
+        }
+    };
+    
+    // Handler for Occasion change (Only affects the Outfit selection list)
+    const handleOccasionChange = (occasion) => {
+        setSelectedOccasion(occasion);
+        // Automatically select the first outfit for the new occasion
+        const newOutfit = OUTFIT_STYLES[mode][occasion][0];
+        setSelectedOutfit(newOutfit);
+        handleStyleChange('Outfit', newOutfit);
+    }
+
+
+    // Helper to get the correct options/selected item for the current mode/category
+    const getActiveOptions = () => {
+        if (activeCategory === 'Outfit') {
+            const options = OUTFIT_STYLES[mode][selectedOccasion] || [];
+            return { options, selectedItem: selectedOutfit };
+        }
+
+        if (mode === 'men') {
+            const category = activeCategory;
+            const options = category === 'Hairstyle' ? MALE_HAIRSTYLES : BEARD_STYLES;
+            const selectedItem = category === 'Hairstyle' ? selectedMaleHairstyle : selectedBeard;
+            return { options, selectedItem };
+        } else { // 'women'
+            let options, selectedItem;
+            switch (activeCategory) {
+                case 'Hairstyle':
+                    options = FEMALE_HAIRSTYLES;
+                    selectedItem = selectedFemaleHairstyle;
+                    break;
+                case 'Lipstick':
+                    options = LIPSTICK_SHADES;
+                    selectedItem = selectedLipstick;
+                    break;
+                case 'Eyebrows':
+                    options = EYEBROW_STYLES;
+                    selectedItem = selectedEyebrow;
+                    break;
+                case 'Earrings':
+                    options = EARRING_STYLES;
+                    selectedItem = selectedEarrings;
+                    break;
+                default:
+                    options = [];
+                    selectedItem = null;
+            }
+            return { options, selectedItem };
+        }
+    };
+    
+    // Renders the list of style options
+    const renderOptions = (options, selectedItem) => (
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-2 sm:p-4 overflow-y-auto max-h-[350px] md:max-h-[500px]">
+            {options.map(item => (
+                <OptionCard
+                    key={item.id}
+                    item={item}
+                    selectedId={selectedItem?.id}
+                    onSelect={(i) => handleStyleChange(activeCategory, i)}
+                    Icon={item.icon}
+                />
+            ))}
+        </div>
+    );
+
+    // Displays the uploaded/processed image or the upload instructions
+    const ModelPreview = () => {
+        const selections = getCurrentSelections();
+        
+        return (
+            <div className="w-full max-w-lg mx-auto bg-gray-800 p-8 rounded-3xl shadow-2xl shadow-amber-900/50 mb-8 border border-gray-700 relative">
+                <h2 className="text-xl font-bold text-white mb-4 border-b border-gray-700 pb-2">Your Preview Model</h2>
+
+                <div className="flex justify-center items-center h-[300px] sm:h-[400px] overflow-hidden rounded-xl bg-gray-700 border-4 border-gray-600 relative">
+                    
+                    {/* Image Display or Placeholder */}
+                    {uploadedImageBase64 ? (
+                        <img
+                            src={processedImageBase64 || uploadedImageBase64}
+                            alt="Style Preview"
+                            className={`w-full h-full object-cover transition-opacity duration-500 ${isLoading ? 'opacity-50' : 'opacity-100'}`}
+                        />
+                    ) : (
+                        <div className="text-center p-8">
+                            <ImageIcon size={64} className="text-gray-500 mx-auto mb-4" />
+                            <p className="text-gray-400 font-semibold">Upload your photo to start visualizing!</p>
+                            <p className="text-xs text-gray-500 mt-2">Best results with a clear frontal view.</p>
+                        </div>
+                    )}
+                    
+                    {/* Loading Indicator for Image Generation */}
+                    {isLoading && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-900/70 z-10">
+                            <div className="flex flex-col items-center">
+                                <Loader className="animate-spin text-amber-400" size={48} />
+                                <p className="text-amber-400 mt-4 text-sm font-medium">Generating new look...</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="mt-6 p-3 bg-gray-700/70 rounded-lg text-sm text-gray-300">
+                    <p><span className="text-amber-300 font-medium">Hairstyle:</span> {selections.hairstyle.name}</p>
+                    {mode === 'men' ? (
+                        <p><span className="text-amber-300 font-medium">Beard Style:</span> {selections.beard.name}</p>
+                    ) : (
+                        <>
+                            <p><span className="text-amber-300 font-medium">Lipstick:</span> {selections.lipstick.name}</p>
+                            <p><span className="text-amber-300 font-medium">Eyebrows:</span> {selections.eyebrow.name}</p>
+                            <p><span className="text-amber-300 font-medium">Earrings:</span> {selections.earrings.name}</p>
+                        </>
+                    )}
+                    <p><span className="text-amber-300 font-medium">Outfit ({selections.occasion}):</span> {selections.outfit.name}</p>
+                </div>
+            </div>
+        );
+    };
+
+    // Tabs for Women's Mode
+    const WomenCategoryTabs = () => (
+        <div className="grid grid-cols-5 gap-2 mb-4 p-1 bg-gray-700 rounded-lg">
+            {['Hairstyle', 'Lipstick', 'Eyebrows', 'Earrings', 'Outfit'].map(category => (
+                <button
+                    key={category}
+                    className={`flex-1 py-2 px-1 rounded-lg text-sm sm:text-base font-medium transition-all duration-300 ${
+                        activeCategory === category ? 'bg-amber-500 text-gray-900 shadow-md' : 'text-gray-300 hover:text-white hover:bg-gray-600'
+                    }`}
+                    onClick={() => setActiveCategory(category)}
+                >
+                    {category === 'Outfit' ? <Shirt className='inline h-4 w-4 mr-1' /> : null}
+                    {category}
+                </button>
+            ))}
+        </div>
+    );
+
+    // Tabs for Men's Mode
+    const MenCategoryTabs = () => (
+        <div className="flex justify-between gap-2 mb-4 p-1 bg-gray-700 rounded-lg">
+            {['Hairstyle', 'Beard', 'Outfit'].map(category => (
+                <button
+                    key={category}
+                    className={`flex-1 py-2 rounded-lg text-lg font-medium transition-all duration-300 ${
+                        activeCategory === category ? 'bg-amber-500 text-gray-900 shadow-md' : 'text-gray-300 hover:text-white hover:bg-gray-600'
+                    }`}
+                    onClick={() => setActiveCategory(category)}
+                >
+                    {category === 'Outfit' ? <Shirt className='inline h-5 w-5 mr-2' /> : null}
+                    {category}
+                </button>
+            ))}
+        </div>
+    );
+    
+    // Occasion Selector for Outfit Tab
+    const OccasionSelector = () => (
+        <div className="mb-4">
+            <label className="block text-gray-300 text-sm font-medium mb-2">Select Occasion Category:</label>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                {OCCASION_CATEGORIES.map(occasion => (
+                    <button
+                        key={occasion}
+                        className={`px-3 py-2 text-sm rounded-lg font-semibold transition-all duration-300 border ${
+                            selectedOccasion === occasion ? 'bg-amber-600 text-white border-amber-500' : 'bg-gray-700 text-gray-300 border-gray-600 hover:bg-gray-600'
+                        }`}
+                        onClick={() => handleOccasionChange(occasion)}
+                    >
+                        {occasion}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+
+    const { options, selectedItem } = getActiveOptions();
+
+    return (
+        <div className="min-h-screen bg-gray-900 font-sans p-4 sm:p-8 flex flex-col items-center">
+            
+            {/* Header */}
+            <header className="text-center mb-8">
+                <h1 className="text-5xl font-extrabold text-amber-400 tracking-wider">Barberly Studio</h1>
+                <p className="text-gray-400 mt-2 text-lg">Your AI-Powered Virtual Makeover</p>
+            </header>
+
+            {/* Mode Switcher */}
+            <div className="flex justify-center p-1 mb-8 bg-gray-700 rounded-xl shadow-xl border border-gray-600">
+                <button
+                    className={`px-6 py-2 rounded-xl font-semibold transition-all duration-300 flex items-center ${
+                        mode === 'women' ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/50' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                    }`}
+                    onClick={() => { 
+                        setMode('women'); 
+                        setActiveCategory('Hairstyle'); 
+                        setAnalysisText(null); 
+                        // Reset outfit for the new mode
+                        const newOutfit = OUTFIT_STYLES['women'][selectedOccasion][0];
+                        setSelectedOutfit(newOutfit);
+                        if (uploadedImageBase64) generateStyledImage(getCurrentSelections('women'), uploadedImageBase64);
+                    }}
+                >
+                    <Heart className="mr-2 h-5 w-5" /> Women's Style
+                </button>
+                <button
+                    className={`px-6 py-2 rounded-xl font-semibold transition-all duration-300 flex items-center ${
+                        mode === 'men' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                    }`}
+                    onClick={() => { 
+                        setMode('men'); 
+                        setActiveCategory('Hairstyle'); 
+                        setAnalysisText(null); 
+                        // Reset outfit for the new mode
+                        const newOutfit = OUTFIT_STYLES['men'][selectedOccasion][0];
+                        setSelectedOutfit(newOutfit);
+                        if (uploadedImageBase64) generateStyledImage(getCurrentSelections('men'), uploadedImageBase64);
+                    }}
+                >
+                    <User className="mr-2 h-5 w-5" /> Men's Grooming
+                </button>
+            </div>
+
+
+            <div className="w-full max-w-6xl flex flex-col md:flex-row gap-8">
+                
+                {/* 1. Model Preview Area and Analysis (Left/Top) */}
+                <div className="flex-1 min-w-0 md:w-1/2">
+                    <ModelPreview />
+                    
+                    {/* Upload Button */}
+                    <label 
+                        htmlFor="file-upload" 
+                        className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-lg text-gray-900 bg-amber-500 hover:bg-amber-400 transition-colors duration-200 cursor-pointer shadow-amber-500/50 hover:shadow-amber-400/70 mt-4"
+                    >
+                        <UploadCloud className="mr-3 h-6 w-6" />
+                        {uploadedImageBase64 ? 'Change Photo' : 'Upload Your Photo'}
+                    </label>
+                    <input 
+                        id="file-upload" 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleImageUpload} 
+                        className="hidden"
+                        disabled={isLoading}
+                    />
+
+                    {/* Analysis Button */}
+                    {uploadedImageBase64 && (
+                        <button
+                            onClick={generateAnalysis}
+                            className={`w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-lg text-white transition-colors duration-200 cursor-pointer mt-4 
+                                ${isAnalysisLoading ? 'bg-gray-600 cursor-not-allowed' : 'bg-green-600 hover:bg-green-500 shadow-green-600/50 hover:shadow-green-500/70'}
+                            `}
+                            disabled={isAnalysisLoading}
+                        >
+                            {isAnalysisLoading ? (
+                                <>
+                                    <Loader className="mr-3 h-5 w-5 animate-spin" />
+                                    Analyzing Look...
+                                </>
+                            ) : (
+                                <>
+                                    <Zap className="mr-3 h-5 w-5" />
+                                    Get Expert Styling Analysis ✨
+                                </>
+                            )}
+                        </button>
+                    )}
+
+                    {/* Analysis Display */}
+                    {analysisText && (
+                        <div className="mt-8 bg-gray-800 p-6 rounded-2xl shadow-xl border border-green-700">
+                            <h3 className="text-xl font-bold text-green-400 mb-4 flex items-center">
+                                <Crown className="mr-2 h-6 w-6" /> Barberly Bot's Expert Analysis
+                            </h3>
+                            {/* whitespace-pre-wrap ensures markdown-style formatting from LLM is preserved */}
+                            <div className="text-gray-300 whitespace-pre-wrap">{analysisText}</div>
+                        </div>
+                    )}
+
+                </div>
+
+                {/* 2. Selection Area (Right/Bottom) */}
+                <div className="flex-1 bg-gray-800/90 p-3 sm:p-6 rounded-2xl shadow-xl border border-gray-700 min-w-0 md:w-1/2">
+                    <h2 className="text-2xl font-semibold text-white mb-4">Select Your Styles</h2>
+
+                    {/* Dynamic Tab Navigation */}
+                    {mode === 'men' ? <MenCategoryTabs /> : <WomenCategoryTabs />}
+                    
+                    {/* Occasion Selector (Only shown on Outfit tab) */}
+                    {activeCategory === 'Outfit' && <OccasionSelector />}
+
+                    {/* Options Grid - Enabled only if an image is uploaded */}
+                    <div className={`overflow-y-auto custom-scroll transition-opacity duration-300 ${!uploadedImageBase64 ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
+                        {renderOptions(options, selectedItem)}
+                    </div>
+                    {!uploadedImageBase64 && (
+                        <p className="text-center text-gray-500 mt-4 p-4 border border-dashed border-gray-700 rounded-xl">
+                            Please upload a photo to enable style selection.
+                        </p>
+                    )}
+                </div>
+            </div>
+
+            {/* Custom Scrollbar Styling (for the options grid) */}
+            <style>
+                {`
+                /* Add Inter font */
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+                
+                body {
+                    font-family: 'Inter', sans-serif;
+                }
+                
+                .custom-scroll::-webkit-scrollbar {
+                    width: 8px;
+                }
+                .custom-scroll::-webkit-scrollbar-track {
+                    background: #374151; /* gray-700 */
+                    border-radius: 10px;
+                }
+                .custom-scroll::-webkit-scrollbar-thumb {
+                    background: #d97706; /* amber-600 */
+                    border-radius: 10px;
+                }
+                .custom-scroll::-webkit-scrollbar-thumb:hover {
+                    background: #f59e0b; /* amber-500 */
+                }
+                `}
+            </style>
+        </div>
+    );
+};
+
+export default App;
